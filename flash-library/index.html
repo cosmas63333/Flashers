@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Flash Library</title>
+  <script src="ruffle/ruffle.js"></script>
+  <style>
+    body { font-family: sans-serif; background: #111; color: #fff; text-align: center; }
+    iframe { border: none; width: 800px; height: 600px; margin-top: 20px; }
+    select { font-size: 16px; margin-top: 20px; }
+  </style>
+</head>
+<body>
+  <h1>My Flash Library</h1>
+  <select id="fileSelector">
+    <option value="">-- Select a SWF File --</option>
+    <option value="swfs/game1.swf">Game 1</option>
+    <option value="swfs/animation1.swf">Animation 1</option>
+  </select>
+  <div id="playerContainer"></div>
+
+  <script>
+    const selector = document.getElementById('fileSelector');
+    const container = document.getElementById('playerContainer');
+
+    selector.addEventListener('change', () => {
+      const swfPath = selector.value;
+      if (swfPath) {
+        container.innerHTML = `<embed src="${swfPath}" width="800" height="600">`;
+      } else {
+        container.innerHTML = '';
+      }
+    });
+  </script>
+</body>
+</html>
