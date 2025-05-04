@@ -2,45 +2,63 @@
 <html>
 <head>
   <meta charset="UTF-8">
-  <title>Flash Library</title>
+  <title></title>
   <script src="ruffle/ruffle.js"></script>
   <style>
-    body { font-family: sans-serif; background: #111; color: #fff; text-align: center; }
-    select { font-size: 16px; margin-top: 20px; }
-    embed { margin-top: 20px; }
+    html, body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: #111;
+    }
+    #fileSelector {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      z-index: 10;
+      font-size: 16px;
+    }
+    #playerContainer {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+    }
+    embed {
+      width: 100%;
+      height: 100%;
+    }
   </style>
 </head>
 <body>
-  <h1>My Flash Library</h1>
   <select id="fileSelector">
     <option value="">-- Select a SWF File --</option>
   </select>
   <div id="playerContainer"></div>
-
   <script>
     async function loadGames() {
       const res = await fetch('games.json');
       const files = await res.json();
       const selector = document.getElementById('fileSelector');
       const container = document.getElementById('playerContainer');
-
       files.forEach(file => {
         const option = document.createElement('option');
         option.value = `swfs/${file}`;
         option.textContent = file;
         selector.appendChild(option);
       });
-
       selector.addEventListener('change', () => {
         const swfPath = selector.value;
         if (swfPath) {
-          container.innerHTML = `<embed src="${swfPath}" width="800" height="600">`;
+          container.innerHTML = `<embed src="${swfPath}">`;
         } else {
           container.innerHTML = '';
         }
       });
     }
-
     loadGames();
   </script>
 </body>
