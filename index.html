@@ -33,7 +33,7 @@
 </head>
 <body>
   <select id="fileSelector">
-    <option value="">-- Select a SWF File --</option>
+    <option value="">-- Select a Game --</option>
   </select>
   <div id="playerContainer"></div>
   <script>
@@ -45,7 +45,7 @@
       files.forEach(file => {
         const option = document.createElement('option');
         option.value = `swfs/${file}`;
-        option.textContent = file;
+        option.textContent = file.replace(/\.swf$/i, '');
         selector.appendChild(option);
       });
       selector.addEventListener('change', () => {
