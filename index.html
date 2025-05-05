@@ -2,7 +2,7 @@
 <html>
 <head>
   <meta charset="UTF-8">
-  <title>Flasher</title>
+  <title></title>
   <script src="ruffle/ruffle.js"></script>
   <style>
     html, body {
@@ -33,7 +33,7 @@
 </head>
 <body>
   <select id="fileSelector">
-    <option value="">-- Select a Game --</option>
+    <option value="">-- Select a SWF File --</option>
   </select>
   <div id="playerContainer"></div>
   <script>
@@ -45,13 +45,19 @@
       files.forEach(file => {
         const option = document.createElement('option');
         option.value = `swfs/${file}`;
-        option.textContent = file.replace(/\.swf$/i, '');
+        option.textContent = file;
         selector.appendChild(option);
       });
       selector.addEventListener('change', () => {
         const swfPath = selector.value;
         if (swfPath) {
-          container.innerHTML = `<ruffle-embed src="${swfPath}" allowfullscreen></ruffle-embed>`;
+          container.innerHTML = '';
+          const ruffle = window.RufflePlayer.newest();
+          const player = ruffle.createPlayer();
+          player.style.width = '100vw';
+          player.style.height = '100vh';
+          container.appendChild(player);
+          player.load(swfPath);
         } else {
           container.innerHTML = '';
         }
