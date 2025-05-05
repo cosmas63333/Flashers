@@ -45,7 +45,10 @@
       files.forEach(file => {
         const option = document.createElement('option');
         option.value = `swfs/${file}`;
-        option.textContent = file.replace(/\.swf$/i, '');
+        option.textContent = file
+  .replace(/-\w+\.swf$/i, '')
+  .replace(/-/g, ' ')
+  .replace(/\b\w/g, c => c.toUpperCase());
         selector.appendChild(option);
       });
       selector.addEventListener('change', () => {
