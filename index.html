@@ -46,7 +46,7 @@
     async function loadGames() {
       try {
         // Fetch the list of games from the remote games.json file using CORS proxy
-        const res = await fetch('https://api.allorigins.win/raw?url=https://raw.githubusercontent.com/cosmas63333/Flashers-swf/main/swfs/games.json', {
+        const res = await fetch('https://cors-anywhere.herokuapp.com/https://raw.githubusercontent.com/cosmas63333/Flashers-swf/main/swfs/games.json', {
           headers: {
             'Origin': window.location.origin
           }
@@ -70,7 +70,7 @@
         files.forEach(file => {
           const option = document.createElement('option');
           // Load the SWF files from the swfs directory using the CORS proxy
-          option.value = `https://api.allorigins.win/raw?url=https://raw.githubusercontent.com/cosmas63333/Flashers-swf/main/swfs/${file}`;
+          option.value = `https://cors-anywhere.herokuapp.com/https://raw.githubusercontent.com/cosmas63333/Flashers-swf/main/swfs/${file}`;
           option.textContent = file
             .replace(/-\w+\.swf$/i, '')
             .replace(/-/g, ' ')
