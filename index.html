@@ -45,15 +45,8 @@
   <script>
     async function loadGames() {
       try {
-        // Use the CORS proxy and include the required headers
-        const res = await fetch('https://cors-anywhere.herokuapp.com/https://raw.githubusercontent.com/cosmas63333/Flashers-swf/main/games.json', {
-          headers: {
-            'Origin': 'https://cosmas63333.github.io' // Include the origin header
-          }
-        });
-        
-        // Log the response for debugging
-        console.log('Response:', res);
+        // Fetch the list of games from the local games.json file in the swfs folder
+        const res = await fetch('swfs/games.json');
         
         if (!res.ok) {
           throw new Error('Failed to load games.json');
@@ -72,8 +65,8 @@
         // Populate the dropdown with game options
         files.forEach(file => {
           const option = document.createElement('option');
-          // Use a CORS proxy to bypass CORS issues
-          option.value = `https://cors-anywhere.herokuapp.com/https://cosmas63333.github.io/Flashers-swf/swfs/${file}`;
+          // Load the SWF files from the swfs directory
+          option.value = `swfs/${file}`;
           option.textContent = file
             .replace(/-\w+\.swf$/i, '')
             .replace(/-/g, ' ')
