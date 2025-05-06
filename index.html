@@ -44,43 +44,38 @@
 
   <script>
     async function loadGames() {
-      // Fetch the list of .swf games from the remote games.json file
       const res = await fetch('https://raw.githubusercontent.com/cosmas63333/Flashers-swf/main/games.json');
       const files = await res.json();
-      
-      // Get the game selector dropdown and container
       const selector = document.getElementById('fileSelector');
       const container = document.getElementById('playerContainer');
       
-      // Populate the dropdown with game options
       files.forEach(file => {
         const option = document.createElement('option');
-        option.value = `https://github.com/cosmas63333/Flashers-swf/blob/main/swfs/${file}?raw=true`; // Using GitHub content URL with ?raw=true
+        // Use a CORS proxy to bypass CORS issues
+        option.value = `https://cors-anywhere.herokuapp.com/https://cosmas63333.github.io/Flashers-swf/swfs/${file}`;
         option.textContent = file
           .replace(/-\w+\.swf$/i, '')
           .replace(/-/g, ' ')
-          .replace(/\b\w/g, c => c.toUpperCase()); // Capitalizes game titles
+          .replace(/\b\w/g, c => c.toUpperCase());
         selector.appendChild(option);
       });
 
-      // Handle game selection from the dropdown
       selector.addEventListener('change', () => {
         const swfPath = selector.value;
         if (swfPath) {
-          container.innerHTML = ''; // Clear the previous player
-          const ruffle = window.RufflePlayer.newest(); // Create a new Ruffle player
+          container.innerHTML = '';
+          const ruffle = window.RufflePlayer.newest();
           const player = ruffle.createPlayer();
-          player.style.width = '100vw'; // Full-screen width
-          player.style.height = '100vh'; // Full-screen height
-          container.appendChild(player); // Append the player to the container
-          player.load(swfPath); // Load the selected SWF game
+          player.style.width = '100vw';
+          player.style.height = '100vh';
+          container.appendChild(player);
+          player.load(swfPath);
         } else {
-          container.innerHTML = ''; // Clear the player if no game is selected
+          container.innerHTML = '';
         }
       });
     }
 
-    // Load the games on page load
     loadGames();
   </script>
 </body>
