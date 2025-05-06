@@ -28,6 +28,15 @@
     #playerContainer {
       width: 100vw;
       height: 100vh;
+      position: relative;
+    }
+    #loadingSpinner {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 24px;
+      color: #fff;
     }
     ruffle-embed {
       display: block;
@@ -40,49 +49,64 @@
   <select id="fileSelector">
     <option value="">-- Select a Game --</option>
   </select>
-  <div id="playerContainer"></div>
+  <div id="playerContainer">
+    <div id="loadingSpinner">Loading...</div>
+  </div>
 
   <script>
-    const proxy = 'https://allorigins.hexlet.app/raw?url=';
-
     async function loadGames() {
       try {
-        const res = await fetch(`${proxy}https://raw.githubusercontent.com/cosmas63333/Flashers-swf/main/games.json`);
-        if (!res.ok) throw new Error('Failed to load games.json');
+        const res = await fetch('https://cors-anywhere.herokuapp.com/https://raw.githubusercontent.com/cosmas63333/Flashers-swf/main/games.json', {
+          headers: {
+            'Origin': window.location.origin
+          }
+        });
+
+        if (!res.ok) {
+          throw new Error('Failed to load games.json');
+        }
+
         const files = await res.json();
+
+        if (!files || files.length === 0) {
+          throw new Error('No games found in games.json');
+        }
 
         const selector = document.getElementById('fileSelector');
         const container = document.getElementById('playerContainer');
-
+        const loadingSpinner = document.getElementById('loadingSpinner');
+        
         files.forEach(file => {
           const option = document.createElement('option');
-          option.value = file;
+          option.value = `https://cors-anywhere.herokuapp.com/https://raw.githubusercontent.com/cosmas63333/Flashers-swf/main/swfs/${file}`;
           option.textContent = file.replace(/-\w+\.swf$/i, '').replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
           selector.appendChild(option);
         });
 
-        selector.addEventListener('change', async () => {
-          const file = selector.value;
-          if (!file) return;
-
-          const swfUrl = `https://raw.githubusercontent.com/cosmas63333/Flashers-swf/main/swfs/${file}`;
-          const proxied = `${proxy}${encodeURIComponent(swfUrl)}`;
-
-          const swfRes = await fetch(proxied);
-          const swfBlob = await swfRes.blob();
-          const swfObjectUrl = URL.createObjectURL(swfBlob);
-
-          container.innerHTML = '';
-          const ruffle = window.RufflePlayer.newest();
-          const player = ruffle.createPlayer();
-          player.style.width = '100vw';
-          player.style.height = '100vh';
-          container.appendChild(player);
-          player.load(swfObjectUrl);
+        selector.addEventListener('change', () => {
+          const swfPath = selector.value;
+          if (swfPath) {
+            loadingSpinner.style.display = 'block'; // Show loading spinner
+            container.innerHTML = ''; 
+            const ruffle = window.RufflePlayer.newest(); 
+            const player = ruffle.createPlayer();
+            player.style.width = '100vw'; 
+            player.style.height = '100vh'; 
+            container.appendChild(player); 
+            player.load(swfPath).then(() => {
+              loadingSpinner.style.display = 'none'; // Hide spinner once loaded
+            }).catch(error => {
+              console.error('Error loading SWF:', error);
+              loadingSpinner.textContent = 'Failed to load game.';
+            });
+          } else {
+            container.innerHTML = ''; 
+            loadingSpinner.style.display = 'none';
+          }
         });
-      } catch (e) {
-        console.error('Error:', e);
-        alert('Failed to load games. Check console.');
+      } catch (error) {
+        console.error('Error loading games:', error);
+        alert('There was an error loading the games. Check the console for more details.');
       }
     }
 
