@@ -45,9 +45,13 @@
   <script>
     async function loadGames() {
       try {
-        // Fetch the list of games from the local games.json file in the swfs folder
-        const res = await fetch('swfs/games.json');
-        
+        // Fetch the list of games from the remote games.json file using CORS proxy
+        const res = await fetch('https://api.allorigins.win/raw?url=https://raw.githubusercontent.com/cosmas63333/Flashers-swf/main/swfs/games.json', {
+          headers: {
+            'Origin': window.location.origin
+          }
+        });
+
         if (!res.ok) {
           throw new Error('Failed to load games.json');
         }
@@ -65,8 +69,8 @@
         // Populate the dropdown with game options
         files.forEach(file => {
           const option = document.createElement('option');
-          // Load the SWF files from the swfs directory
-          option.value = `swfs/${file}`;
+          // Load the SWF files from the swfs directory using the CORS proxy
+          option.value = `https://api.allorigins.win/raw?url=https://raw.githubusercontent.com/cosmas63333/Flashers-swf/main/swfs/${file}`;
           option.textContent = file
             .replace(/-\w+\.swf$/i, '')
             .replace(/-/g, ' ')
@@ -84,7 +88,7 @@
             player.style.width = '100vw'; // Full-screen width
             player.style.height = '100vh'; // Full-screen height
             container.appendChild(player); // Append the player to the container
-            player.load(swfPath); // Load the selected SWF game
+            player.load(swfPath); // Load the selected SWF game through the proxy
           } else {
             container.innerHTML = ''; // Clear the player if no game is selected
           }
