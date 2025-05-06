@@ -2,7 +2,7 @@
 <html>
 <head>
   <meta charset="UTF-8">
-  <title></title>
+  <title>Flash Games</title>
   <script src="ruffle/ruffle.js"></script>
   <style>
     html, body {
@@ -19,6 +19,11 @@
       left: 10px;
       z-index: 10;
       font-size: 16px;
+      color: #fff;
+      background-color: #333;
+      border: none;
+      padding: 10px;
+      border-radius: 5px;
     }
     #playerContainer {
       width: 100vw;
@@ -36,36 +41,46 @@
     <option value="">-- Select a Game --</option>
   </select>
   <div id="playerContainer"></div>
+
   <script>
     async function loadGames() {
-      const res = await fetch('games.json');
+      // Fetch the list of .swf games from the remote games.json file
+      const res = await fetch('https://raw.githubusercontent.com/cosmas63333/Flashers-swf/main/games.json');
       const files = await res.json();
+      
+      // Get the game selector dropdown and container
       const selector = document.getElementById('fileSelector');
       const container = document.getElementById('playerContainer');
+      
+      // Populate the dropdown with game options
       files.forEach(file => {
         const option = document.createElement('option');
-        option.value = `https://raw.githubusercontent.com/cosmas63333/Flashers-swf/main/swfs/${file}`;
+        option.value = `https://github.com/cosmas63333/Flashers-swf/blob/main/swfs/${file}?raw=true`; // Using GitHub content URL with ?raw=true
         option.textContent = file
-  .replace(/-\w+\.swf$/i, '')
-  .replace(/-/g, ' ')
-  .replace(/\b\w/g, c => c.toUpperCase());
+          .replace(/-\w+\.swf$/i, '')
+          .replace(/-/g, ' ')
+          .replace(/\b\w/g, c => c.toUpperCase()); // Capitalizes game titles
         selector.appendChild(option);
       });
+
+      // Handle game selection from the dropdown
       selector.addEventListener('change', () => {
         const swfPath = selector.value;
         if (swfPath) {
-          container.innerHTML = '';
-          const ruffle = window.RufflePlayer.newest();
+          container.innerHTML = ''; // Clear the previous player
+          const ruffle = window.RufflePlayer.newest(); // Create a new Ruffle player
           const player = ruffle.createPlayer();
-          player.style.width = '100vw';
-          player.style.height = '100vh';
-          container.appendChild(player);
-          player.load(swfPath);
+          player.style.width = '100vw'; // Full-screen width
+          player.style.height = '100vh'; // Full-screen height
+          container.appendChild(player); // Append the player to the container
+          player.load(swfPath); // Load the selected SWF game
         } else {
-          container.innerHTML = '';
+          container.innerHTML = ''; // Clear the player if no game is selected
         }
       });
     }
+
+    // Load the games on page load
     loadGames();
   </script>
 </body>
