@@ -45,61 +45,49 @@
   <script>
     async function loadGames() {
       try {
-        // Fetch the list of games from the remote games.json file using CORS proxy
-        const res = await fetch('https://cors-anywhere.herokuapp.com/https://raw.githubusercontent.com/cosmas63333/Flashers-swf/main/games.json', {
-          headers: {
-            'Origin': window.location.origin
-          }
-        });
+        const proxy = 'https://allorigins.hexlet.app/get?url=';
+        const base = 'https://raw.githubusercontent.com/cosmas63333/Flashers-swf/main/swfs/';
+        const jsonUrl = 'https://raw.githubusercontent.com/cosmas63333/Flashers-swf/main/games.json';
+        const res = await fetch(proxy + encodeURIComponent(jsonUrl));
+        const data = await res.json();
+        const files = JSON.parse(data.contents);
 
-        if (!res.ok) {
-          throw new Error('Failed to load games.json');
-        }
+        if (!files || files.length === 0) throw new Error('No games found');
 
-        const files = await res.json();
-
-        if (!files || files.length === 0) {
-          throw new Error('No games found in games.json');
-        }
-
-        // Get the game selector dropdown and container
         const selector = document.getElementById('fileSelector');
         const container = document.getElementById('playerContainer');
-        
-        // Populate the dropdown with game options
+
         files.forEach(file => {
           const option = document.createElement('option');
-          // Load the SWF files from the swfs directory using the CORS proxy
-          option.value = `https://cors-anywhere.herokuapp.com/https://raw.githubusercontent.com/cosmas63333/Flashers-swf/main/swfs/${file}`;
+          option.value = proxy + encodeURIComponent(base + file);
           option.textContent = file
             .replace(/-\w+\.swf$/i, '')
             .replace(/-/g, ' ')
-            .replace(/\b\w/g, c => c.toUpperCase()); // Capitalizes game titles
+            .replace(/\b\w/g, c => c.toUpperCase());
           selector.appendChild(option);
         });
 
-        // Handle game selection from the dropdown
         selector.addEventListener('change', () => {
           const swfPath = selector.value;
           if (swfPath) {
-            container.innerHTML = ''; // Clear the previous player
-            const ruffle = window.RufflePlayer.newest(); // Create a new Ruffle player
+            container.innerHTML = '';
+            const ruffle = window.RufflePlayer.newest();
             const player = ruffle.createPlayer();
-            player.style.width = '100vw'; // Full-screen width
-            player.style.height = '100vh'; // Full-screen height
-            container.appendChild(player); // Append the player to the container
-            player.load(swfPath); // Load the selected SWF game through the proxy
+            player.style.width = '100vw';
+            player.style.height = '100vh';
+            container.appendChild(player);
+            player.load(swfPath);
           } else {
-            container.innerHTML = ''; // Clear the player if no game is selected
+            container.innerHTML = '';
           }
         });
-      } catch (error) {
-        console.error('Error loading games:', error);
-        alert('There was an error loading the games. Check the console for more details.');
+
+      } catch (err) {
+        console.error('Error loading games:', err);
+        alert('Could not load games.');
       }
     }
 
-    // Load the games on page load
     loadGames();
   </script>
 </body>
