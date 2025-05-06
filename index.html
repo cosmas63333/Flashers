@@ -46,7 +46,7 @@
     async function loadGames() {
       try {
         // Fetch the list of games from the remote games.json file using CORS proxy
-        const res = await fetch('https://cors-anywhere.herokuapp.com/https://raw.githubusercontent.com/cosmas63333/Flashers-swf/main/swfs/games.json', {
+        const res = await fetch('https://cors-anywhere.herokuapp.com/https://raw.githubusercontent.com/cosmas63333/Flashers-swf/main/games.json', {
           headers: {
             'Origin': window.location.origin
           }
