@@ -45,18 +45,20 @@
   <script>
     async function loadGames() {
       try {
-        const res = await fetch('https://corsproxy.github.io/?https://raw.githubusercontent.com/cosmas63333/Flashers-swf/main/games.json');
+        const proxyUrl = 'https://cors-proxy.htmldriven.com/?url=';
+        const targetUrl = 'https://raw.githubusercontent.com/cosmas63333/Flashers-swf/main/games.json';
+        const res = await fetch(proxyUrl + encodeURIComponent(targetUrl));
         if (!res.ok) throw new Error('Failed to load games.json');
 
-        const files = await res.json();
-        if (!files || files.length === 0) throw new Error('No games found in games.json');
+        const json = await res.json();
+        const files = JSON.parse(json.body);
 
         const selector = document.getElementById('fileSelector');
         const container = document.getElementById('playerContainer');
 
         files.forEach(file => {
           const option = document.createElement('option');
-          option.value = `https://corsproxy.github.io/?https://raw.githubusercontent.com/cosmas63333/Flashers-swf/main/swfs/${file}`;
+          option.value = proxyUrl + encodeURIComponent(`https://raw.githubusercontent.com/cosmas63333/Flashers-swf/main/swfs/${file}`);
           option.textContent = file
             .replace(/-\w+\.swf$/i, '')
             .replace(/-/g, ' ')
